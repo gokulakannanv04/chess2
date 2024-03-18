@@ -1,0 +1,48 @@
+/* src/components/Chessboard.css */
+.board-row {
+    display: flex;
+  }
+  
+  .square {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Format for rows 1, 3, 5, and 7 */
+  .board-row:nth-child(odd) .square:nth-child(odd) {
+    background-color: #6b9b42; /* Green color */
+  }
+  
+  .board-row:nth-child(odd) .square:nth-child(even) {
+    background-color: #bedc9f; /* Light green color */
+  }
+  
+  /* Format for rows 2, 4, 6, and 8 */
+  .board-row:nth-child(even) .square:nth-child(odd) {
+    background-color: #bedc9f; /* Light green color */
+  }
+  
+  .board-row:nth-child(even) .square:nth-child(even) {
+    background-color: #6b9b42; /* Green color */
+  }
+  
+  .piece {
+    font-size: 30px;
+  }
+  
+  .black {
+    color: #000;
+  }
+  
+  .white {
+    color: #fff;
+  }
+  
+  .chessboard {
+    display: flex;
+    flex-direction: column;
+  }
+  
