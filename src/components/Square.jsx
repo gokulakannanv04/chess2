@@ -1,4 +1,5 @@
 import React from 'react';
+import '../components/Square.css'; // Import the CSS file
 import bknightImage from '../images/bknight.png';
 import bbishopImage from '../images/bbishop.png';
 import bqueenImage from '../images/bqueen.png';
@@ -27,11 +28,15 @@ const pieceImages = {
   'wpawn': wpawnImage,
 };
 
-const Square = ({ piece, onClick }) => {
+const Square = ({ piece, onClick, highlight }) => {
+  // Define the border style based on the highlight prop
+  const borderStyle = highlight ? '2px solid yellow' : 'none';
   const piecei = pieceImages[piece];
   return (
     <div className="square" onClick={onClick}>
+      <div className="square-content" style={{ border: borderStyle }}>
       {piece !== 'Empty' && <img src={piecei} alt={piece} style={{ maxWidth: '100%', maxHeight: '100%' }} />}
+    </div>
     </div>
   );
 };
