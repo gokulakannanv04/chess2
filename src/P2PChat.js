@@ -7,12 +7,12 @@ const P2PChat = () => {
   const [receivedMessages, setReceivedMessages] = useState([]);
   const [messageToSend, setMessageToSend] = useState('');
   const [peerId, setPeerId] = useState('');
+  const [userCount, setUserCount] = useState(0);
 
   useEffect(() => {
     const initializePeer = () => {
-      // Specify a custom ID for the peer
-      const customPeerId = 'chess'; // Modify this line with your custom peer ID
-      const newPeer = new Peer(customPeerId); // Create a new Peer instance with the custom ID
+      const customPeerId = `chess${userCount}`; // Custom peer ID with dynamic number
+      const newPeer = new Peer(customPeerId);
       newPeer.on('open', id => {
         console.log('Peer connected with ID:', id);
         setPeer(newPeer);
@@ -35,7 +35,7 @@ const P2PChat = () => {
     };
 
     initializePeer();
-  }, []);
+  }, [userCount]);
 
   const connectToPeer = () => {
     if (!peer) {
@@ -52,6 +52,7 @@ const P2PChat = () => {
         setReceivedMessages(prevMessages => [...prevMessages, { from: conn.peer, message: data }]);
       });
     });
+    setUserCount(prevCount => prevCount + 1); // Increment user count
   };
 
   const sendMessage = () => {
