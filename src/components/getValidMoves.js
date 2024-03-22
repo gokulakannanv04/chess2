@@ -1,3 +1,4 @@
+// getValidMoves.js
 let currentTurn = 'white'; // Initialize the current turn to white
 export const switchTurn = () => {
   currentTurn = currentTurn === 'white' ? 'black' : 'white';
