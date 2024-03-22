@@ -6,13 +6,15 @@ const P2PChat = () => {
   const [connection, setConnection] = useState(null);
   const [receivedMessages, setReceivedMessages] = useState([]);
   const [messageToSend, setMessageToSend] = useState('');
+  const [peerId, setPeerId] = useState('');
 
   useEffect(() => {
     const initializePeer = () => {
       const newPeer = new Peer(); // Create a new Peer instance
-      newPeer.on('open', () => {
-        console.log('Peer connected with ID:', newPeer.id);
+      newPeer.on('open', id => {
+        console.log('Peer connected with ID:', id);
         setPeer(newPeer); // Set the peer state once it's connected
+        setPeerId(id); // Set the peer ID state
       });
 
       newPeer.on('connection', conn => {
@@ -40,16 +42,16 @@ const P2PChat = () => {
       return;
     }
 
-    const peerId = prompt('Enter peer ID:');
-    if (!peerId) return;
+    const remotePeerId = prompt('Enter peer ID:');
+    if (!remotePeerId) return;
 
-    const conn = peer.connect(peerId);
+    const conn = peer.connect(remotePeerId);
     conn.on('open', () => {
-      console.log('Connected to peer:', peerId);
+      console.log('Connected to peer:', remotePeerId);
       setConnection(conn);
       conn.on('data', data => {
         console.log('Received message:', data);
-        setReceivedMessages(prevMessages => [...prevMessages, { from: peerId, message: data }]);
+        setReceivedMessages(prevMessages => [...prevMessages, { from: remotePeerId, message: data }]);
       });
     });
   };
@@ -84,6 +86,7 @@ const P2PChat = () => {
       <input type="text" value={messageToSend} onChange={e => setMessageToSend(e.target.value)} />
       <button onClick={sendMessage}>Send</button>
       <button onClick={connectToPeer}>Connect to Peer</button>
+      <div>Your Peer ID: {peerId}</div>
     </div>
   );
 };
