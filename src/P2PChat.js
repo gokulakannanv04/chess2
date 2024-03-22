@@ -10,23 +10,24 @@ const P2PChat = () => {
 
   useEffect(() => {
     const initializePeer = () => {
-      const newPeer = new Peer(); // Create a new Peer instance
+      // Specify a custom ID for the peer
+      const customPeerId = 'chess'; // Modify this line with your custom peer ID
+      const newPeer = new Peer(customPeerId); // Create a new Peer instance with the custom ID
       newPeer.on('open', id => {
         console.log('Peer connected with ID:', id);
-        setPeer(newPeer); // Set the peer state once it's connected
-        setPeerId(id); // Set the peer ID state
+        setPeer(newPeer);
+        setPeerId(id);
       });
 
       newPeer.on('connection', conn => {
         console.log('Received connection from peer:', conn.peer);
-        setConnection(conn); // Set the connection state when a connection is received
+        setConnection(conn);
         conn.on('data', data => {
           console.log('Received message:', data);
           setReceivedMessages(prevMessages => [...prevMessages, { from: conn.peer, message: data }]);
         });
       });
 
-      // Return a cleanup function to disconnect the peer when the component unmounts
       return () => {
         console.log('Disconnecting peer');
         newPeer.disconnect();
