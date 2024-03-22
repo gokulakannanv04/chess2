@@ -42,16 +42,13 @@ const P2PChat = () => {
       return;
     }
 
-    const remotePeerId = prompt('Enter peer ID:');
-    if (!remotePeerId) return;
-
-    const conn = peer.connect(remotePeerId);
+    const conn = peer.connect(prompt('Enter peer ID:'));
     conn.on('open', () => {
-      console.log('Connected to peer:', remotePeerId);
+      console.log('Connected to peer:', conn.peer);
       setConnection(conn);
       conn.on('data', data => {
         console.log('Received message:', data);
-        setReceivedMessages(prevMessages => [...prevMessages, { from: remotePeerId, message: data }]);
+        setReceivedMessages(prevMessages => [...prevMessages, { from: conn.peer, message: data }]);
       });
     });
   };
