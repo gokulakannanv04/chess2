@@ -1,5 +1,8 @@
 let currentTurn = 'white'; // Initialize the current turn to white
-const getValidMoves = (piece, row, col, color, board) => {
+export const switchTurn = () => {
+  currentTurn = currentTurn === 'white' ? 'black' : 'white';
+}; 
+export const getValidMoves = (piece, row, col, color, board) => {
     const validMoves = [];
   
     // Define a function to check if a position is within the bounds of the board
@@ -537,6 +540,3 @@ switchTurn(); // Switch turn after a valid move
           export default getValidMoves;
           
 // Function to switch turns after each move
-const switchTurn = () => {
-    currentTurn = currentTurn === 'white' ? 'black' : 'white';
-}; 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Square from './Square';
-import getValidMoves from './getValidMoves';
+// import switchTurn from '../components/getValidMoves';
+import {getValidMoves,switchTurn} from './getValidMoves';
 import '../components/Chessboard.css'; // Import the CSS file
 
 const INITIAL_BOARD = [
@@ -18,15 +19,13 @@ const Chessboard = () => {
   const [board, setBoard] = useState(INITIAL_BOARD);
   const [selectedPiece, setSelectedPiece] = useState(null);
   const [validMoves, setValidMoves] = useState([]);
-  // const [currentTurn, setCurrentTurn] = useState('white'); // Track current turn
+  // const [currentTurn, setCurrentTurn] = useState('white');
+  const [winner, setWinner] = useState(null); // State to track winner
 
   const handleSquareClick = (row, col) => {
     const piece = board[row][col];
-    
-    // Check if it's the correct player's turn
-    // if (selectedPiece.charAt(0) !== currentTurn[0]) {
-    //   console.log(selectedPiece.charAt(0));
-    //   console.log(currentTurn);
+
+    // if (piece.charAt(0) !== currentTurn[0]) {
     //   console.log("It's not your turn!");
     //   return;
     // }
@@ -42,6 +41,7 @@ const Chessboard = () => {
       if (row === selectedRow && col === selectedCol) {
         setSelectedPiece(null);
         setValidMoves([]);
+        switchTurn();
         return;
       }
       if (canMove(row, col, validMoves)) {
@@ -49,7 +49,8 @@ const Chessboard = () => {
         newBoard[row][col] = selectedPiece.piece;
         newBoard[selectedRow][selectedCol] = 'Empty';
         setBoard(newBoard);
-
+        // switchTurn();
+        checkWinner(newBoard); // Check for winner after each move
       }
       setSelectedPiece(null);
       setValidMoves([]);
@@ -60,7 +61,17 @@ const Chessboard = () => {
     return validMoves.some(move => move.row === toRow && move.col === toCol);
   };
 
+ 
 
+  const checkWinner = (board) => {
+    const blackKing = board.flat().includes('bking');
+    const whiteKing = board.flat().includes('wking');
+    if (!blackKing) {
+      setWinner('White');
+    } else if (!whiteKing) {
+      setWinner('Black');
+    }
+  };
 
   const renderSquare = (piece, rowIndex, colIndex) => {
     const isSelected = selectedPiece && selectedPiece.row === rowIndex && selectedPiece.col === colIndex;
@@ -84,7 +95,12 @@ const Chessboard = () => {
     ));
   };
 
-  return <div className="chessboard">{renderBoard()}</div>;
+  return (
+    <div>
+      <div className="chessboard">{renderBoard()}</div>
+      {winner && <div className="winner-message">{`${winner} wins!`}</div>}
+    </div>
+  );
 };
 
 export default Chessboard;
