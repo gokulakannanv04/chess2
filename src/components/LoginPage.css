@@ -1,0 +1,40 @@
+.login-page {
+    background-image: url('https://wallpapercave.com/wp/wp2883566.jpg');
+    background-size: cover;
+    height: 100vh; /* Set the height to cover the entire viewport */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .login-container {
+    width: 300px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.8); /* Optional: Add a semi-transparent background to improve readability */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Optional: Add a shadow for depth */
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+
+  }
+  
+  .login-button {
+    width: 100%; /* Make the button full-width */
+    padding: 10px; /* Add padding for better appearance */
+    background-color: #007bff; /* Change button background color */
+    color: white; /* Change text color */
+    border: none; /* Remove border */
+    border-radius: 30px; /* Create an oval shape */
+    cursor: pointer;
+    align-items: center;
+    text-align: center;
+  }
+  
+  .login-button:hover {
+    background-color: #0056b3; /* Change button background color on hover */
+  }
+  
+  /* Add additional styles as needed */
+  

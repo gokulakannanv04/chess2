@@ -1,0 +1,23 @@
+.register-page {
+    background-image: url('https://wallpapercave.com/wp/wp2883566.jpg');
+    background-size: cover;
+    height: 100vh; /* Set the height to cover the entire viewport */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .register-container {
+    width: 300px;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.8); /* Optional: Add a semi-transparent background to improve readability */
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* Optional: Add a shadow for depth */
+  }
+  
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  /* Add additional styles as needed */
+  

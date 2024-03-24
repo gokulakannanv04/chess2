@@ -1,0 +1,73 @@
+/* src/components/HomePage.css */
+
+.home-container {
+    position: relative; /* Ensure position relative for positioning the navbar */
+    width: 100%;
+    height: 100vh; /* Adjust the height as needed */
+  }
+  
+  .home-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .NavBar {
+    position: absolute; /* Position absolutely relative to .home-container */
+    top: 0; /* Position at the top */
+    left: 0; /* Position at the left */
+    width: 100%; /* Take full width of the container */
+    z-index: 1; /* Ensure it's above the image */
+  }
+  .content-overlay {
+    position: absolute;
+    top:0%;
+    left: 0%;
+    right: 0%;
+  
+
+    z-index: 1; /* Ensure it's above the image */
+  }
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 10px 20px;
+    overflow: hidden;
+    background-color: transparent;
+    
+  }
+  
+  li {
+    float: left;
+  }
+  
+  li a {
+    display: block;
+    color:blue;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+  li a:hover:not(.active) {
+    background-color: blue;
+  }
+  
+  .active {
+    background-color: transparent;
+  }
+  .login-button {
+    background-color:blue; /* Set the background color */
+    color: white; /* Set the text color */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Set padding */
+    border-radius: 50px; /* Make it oval shape */
+    font-size: 20px; /* Increase font size */
+    cursor: pointer; /* Add pointer cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth transition */
+  }
+  
+  .login-button:hover {
+    background-color: #0056b3; /* Darken the background color on hover */
+  }
+  

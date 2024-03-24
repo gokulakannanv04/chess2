@@ -6,28 +6,38 @@ const P2PChat = () => {
   const [connection, setConnection] = useState(null);
   const [receivedMessages, setReceivedMessages] = useState([]);
   const [messageToSend, setMessageToSend] = useState('');
-  const [peerId, setPeerId] = useState('');
-  const [userCount, setUserCount] = useState(0);
+  const [peerId, setPeerId] = useState(null);
+  const predefinedPeerId = 'chess'; // Prefix for predefined peer IDs
+  const maxAttempts = 10; // Maximum number of attempts to find an active peer
+  const peerIds = [...Array(maxAttempts).keys()].map(i => predefinedPeerId + i); // Generate an array of possible peer IDs
+  const [userCount] = useState(Math.floor(Math.random() * 10)); // Generate random number between 0 and 9
+  const [isConnected, setIsConnected] = useState(false); // Flag to track connection status
 
   useEffect(() => {
     const initializePeer = () => {
-      const customPeerId = `chess${userCount}`; // Custom peer ID with dynamic number
-      const newPeer = new Peer(customPeerId);
+      const newPeer = new Peer(`chess${userCount}`); // Use the random number directly for peer ID
       newPeer.on('open', id => {
         console.log('Peer connected with ID:', id);
-        setPeer(newPeer);
-        setPeerId(id);
+        setPeer(newPeer); // Set the peer state once it's connected
+        setPeerId(id); // Set the peer ID state
       });
 
       newPeer.on('connection', conn => {
+        if (isConnected) { // Check if already connected
+          console.log('Connection rejected: Already connected');
+          return;
+        }
+
         console.log('Received connection from peer:', conn.peer);
-        setConnection(conn);
+        setConnection(conn); // Set the connection state when a connection is received
         conn.on('data', data => {
           console.log('Received message:', data);
           setReceivedMessages(prevMessages => [...prevMessages, { from: conn.peer, message: data }]);
         });
+        setIsConnected(true); // Set isConnected flag to true
       });
 
+      // Return a cleanup function to disconnect the peer when the component unmounts
       return () => {
         console.log('Disconnecting peer');
         newPeer.disconnect();
@@ -35,25 +45,28 @@ const P2PChat = () => {
     };
 
     initializePeer();
-  }, [userCount]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const connectToPeer = () => {
-    if (!peer) {
-      console.error('Peer is not initialized yet');
-      return;
+  useEffect(() => {
+    if (peer && !isConnected) { // Check isConnected flag before attempting to connect
+      console.log('Trying to connect to active peer...');
+      for (let i = 0; i < peerIds.length; i++) {
+        const conn = peer.connect(peerIds[i]);
+        conn.on('open', () => {
+          console.log('Connected to peer:', conn.peer);
+          setConnection(conn);
+          conn.on('data', data => {
+            console.log('Received message:', data);
+            setReceivedMessages(prevMessages => [...prevMessages, { from: conn.peer, message: data }]);
+          });
+        });
+        conn.on('error', () => {
+          console.log('Connection failed:', conn.peer);
+        });
+      }
     }
-
-    const conn = peer.connect(prompt('Enter peer ID:'));
-    conn.on('open', () => {
-      console.log('Connected to peer:', conn.peer);
-      setConnection(conn);
-      conn.on('data', data => {
-        console.log('Received message:', data);
-        setReceivedMessages(prevMessages => [...prevMessages, { from: conn.peer, message: data }]);
-      });
-    });
-    setUserCount(prevCount => prevCount + 1); // Increment user count
-  };
+  }, [peer, isConnected, peerIds]);
 
   const sendMessage = () => {
     if (!connection) {
@@ -84,7 +97,6 @@ const P2PChat = () => {
       </div>
       <input type="text" value={messageToSend} onChange={e => setMessageToSend(e.target.value)} />
       <button onClick={sendMessage}>Send</button>
-      <button onClick={connectToPeer}>Connect to Peer</button>
       <div>Your Peer ID: {peerId}</div>
     </div>
   );
