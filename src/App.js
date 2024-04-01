@@ -7,6 +7,7 @@ import Chessboard from './components/Chessboard';
 import LoginPage from './components/LoginPage';
 import RegisterPage from './components/RegisterPage';
 import Square from './components/Square';
+import GamePage from './components/GamePage';
 
 
 
@@ -32,6 +33,7 @@ function App() {
           <Route path="/square" element={<Square />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/gamepage" element={<GamePage/>}/>
         </Routes>
  
   );

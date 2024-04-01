@@ -1,24 +1,34 @@
-import React, { useEffect } from 'react';
-// import { navigate } from 'react-router-dom'; // Import navigate function
-import './HomePage.css';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import './HomePage.css';
 
 function HomePage() {
   const navigate = useNavigate();
-  useEffect(() => {
-    // Add event listener to disable scrolling when HomePage is mounted
-    document.body.style.overflow = 'hidden';
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-    // Clean up function to enable scrolling when HomePage is unmounted
-    return () => {
-      document.body.style.overflow = 'visible';
-    };
+  useEffect(() => {
+    // Check if the user is already logged in on component mount
+    const username = localStorage.getItem('username');
+    if (username) {
+      setIsLoggedIn(true);
+    }
   }, []);
 
-  const handleLoginClick = () => {
+  const handleLogout = () => {
+    // Navigate to the login page when the button is clicked using navigate function
+    navigate('/');
+    // Clear username from localStorage to log out the user completely
+    localStorage.removeItem('username');
+    setIsLoggedIn(false);
+  };
+
+  const handleLogin = () => {
     // Navigate to the login page when the button is clicked using navigate function
     navigate('/login');
+  };
+  const handlePlay = () => {
+    // Navigate to the login page when the button is clicked using navigate function
+    navigate('/gamepage');
   };
 
   return (
@@ -31,10 +41,21 @@ function HomePage() {
       <div className="content-overlay">
         <div>
           <ul>
-            <li style={{ float: 'right' }}>
-              {/* Replace the About link with a styled Login button */}
-              <button className="login-button" onClick={handleLoginClick}>Login</button>
+          <li style={{ float: 'right' }}>
+           
+           {isLoggedIn ? (
+             <button className="login-button" onClick={handleLogout}>Logout</button>
+           ) : (
+             <button className="login-button" onClick={handleLogin}>Login</button>
+           )}
+         </li>
+          <li style={{ float: 'right' }}>
+            <div> {isLoggedIn ? (
+      <button className="login-button" onClick={handlePlay}>Play</button>
+      ) : ( <br></br> )}
+    </div>
             </li>
+            
           </ul>
         </div>
       </div>

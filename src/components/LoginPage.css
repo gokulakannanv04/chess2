@@ -20,8 +20,8 @@
 
   }
   
-  .login-button {
-    width: 100%; /* Make the button full-width */
+  .login-buttonr {
+    width: 50%; /* Make the button full-width */
     padding: 10px; /* Add padding for better appearance */
     background-color: #007bff; /* Change button background color */
     color: white; /* Change text color */
@@ -31,8 +31,20 @@
     align-items: center;
     text-align: center;
   }
-  
-  .login-button:hover {
+  .login-button {
+    width: 100%; /* Make the button full-width */
+    padding: 10px 20px;  /* Add padding for better appearance */
+    background-color: #007bff; /* Change button background color */
+    color: white; /* Change text color */
+    border: none; /* Remove border */
+    border-radius: 50px; /* Create an oval shape */
+    cursor: pointer;
+    font-size: 20px;
+    align-items: center;
+    text-align: center;
+    transition: background-color 0.3s ease;
+  }
+  .login-button:hover,.login-buttonr:ho {
     background-color: #0056b3; /* Change button background color on hover */
   }
   
