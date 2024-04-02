@@ -66,9 +66,9 @@ function GamePage() {
   return (
     <div className="game-container">
       <div className="connecting-circle">
-        {!isConnecting && <span className="connecting-text">Connecting...</span>}
+        {isConnecting && <span className="connecting-text">Connecting...</span>}
       </div>
-      {isConnecting && (
+      {!isConnecting && (
         <button onClick={handlePlay} className="play-button">
           {isWhite ? 'Play as White' : 'Play as Black'}
         </button>
