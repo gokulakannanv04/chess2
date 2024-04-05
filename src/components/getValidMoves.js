@@ -36,6 +36,7 @@ const getValidMoves = (piece, row, col, color, board) => {
       }
       break;
     case 'wpawn':
+      console.log("getmoves");
       if (color === 'w' && currentTurn === 'white') {
         // White pawn logic...
         if (isValidPosition(row - 1, col) && board[row - 1][col] === 'Empty') {
