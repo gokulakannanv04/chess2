@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Square from './Square';
-// import switchTurn from '../components/getValidMoves';
-import {getValidMoves,switchTurn} from './getValidMoves';
 import '../components/Chessboard.css'; // Import the CSS file
 
 const INITIAL_BOARD = [
@@ -19,38 +17,49 @@ const Chessboard = () => {
   const [board, setBoard] = useState(INITIAL_BOARD);
   const [selectedPiece, setSelectedPiece] = useState(null);
   const [validMoves, setValidMoves] = useState([]);
-  // const [currentTurn, setCurrentTurn] = useState('white');
-  const [winner, setWinner] = useState(null); // State to track winner
+  const [winner, setWinner] = useState(null);
+  const [ws, setWs] = useState(null);
+
+  useEffect(() => {
+    const ws = new WebSocket('ws://localhost:4000'); // Replace with your server URL
+    ws.onopen = () => console.log('WebSocket connected');
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'updateBoard') {
+        setBoard(data.board);
+      } else if (data.type === 'gameOver') {
+        setWinner(data.winner);
+      } else if (data.type === 'validMoves') {
+        setValidMoves(data.validMoves);
+      }
+    };
+    setWs(ws);
+
+    return () => ws.close();
+  }, []);
 
   const handleSquareClick = (row, col) => {
+    if (!ws) return; // WebSocket not initialized
     const piece = board[row][col];
-
-    // if (piece.charAt(0) !== currentTurn[0]) {
-    //   console.log("It's not your turn!");
-    //   return;
-    // }
 
     if (selectedPiece === null) {
       if (piece !== 'Empty') {
         setSelectedPiece({ piece, row, col });
-        const moves = getValidMoves(piece, row, col, piece.charAt(0) === 'b' ? 'b' : 'w', board);
-        setValidMoves(moves);
+        ws.send(JSON.stringify({ type: 'getValidMoves', piece, row, col, board }));
       }
     } else {
       const { row: selectedRow, col: selectedCol } = selectedPiece;
       if (row === selectedRow && col === selectedCol) {
         setSelectedPiece(null);
         setValidMoves([]);
-        switchTurn();
         return;
       }
       if (canMove(row, col, validMoves)) {
         const newBoard = [...board];
         newBoard[row][col] = selectedPiece.piece;
         newBoard[selectedRow][selectedCol] = 'Empty';
-        setBoard(newBoard);
-        // switchTurn();
-        checkWinner(newBoard); // Check for winner after each move
+        setBoard(newBoard); // Update local state
+        ws.send(JSON.stringify({ type: 'move', from: { row: selectedRow, col: selectedCol }, to: { row, col } }));
       }
       setSelectedPiece(null);
       setValidMoves([]);
@@ -59,18 +68,6 @@ const Chessboard = () => {
 
   const canMove = (toRow, toCol, validMoves) => {
     return validMoves.some(move => move.row === toRow && move.col === toCol);
-  };
-
- 
-
-  const checkWinner = (board) => {
-    const blackKing = board.flat().includes('bking');
-    const whiteKing = board.flat().includes('wking');
-    if (!blackKing) {
-      setWinner('White');
-    } else if (!whiteKing) {
-      setWinner('Black');
-    }
   };
 
   const renderSquare = (piece, rowIndex, colIndex) => {

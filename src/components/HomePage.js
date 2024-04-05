@@ -28,7 +28,7 @@ function HomePage() {
   };
   const handlePlay = () => {
     // Navigate to the login page when the button is clicked using navigate function
-    navigate('/gamepage');
+    navigate('/chessboard');
   };
 
   return (
