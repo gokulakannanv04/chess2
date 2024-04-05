@@ -9,8 +9,8 @@ function RegisterPage ()  {
   const handleSubmit = async() => {
     // navigate('/login');
     try {
-      // const response = await fetch('http://localhost:3002/register', {
-      const response = await fetch('https://server-aimq.onrender.com/register', {
+      const response = await fetch('http://localhost:4000/register', {
+      // const response = await fetch('https://server-aimq.onrender.com/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

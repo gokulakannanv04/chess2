@@ -9,6 +9,7 @@ const Chessboard = () => {
   const [winner, setWinner] = useState(null);
   const [ws, setWs] = useState(null);
   const [gameId, setGameId] = useState(null); // State to store the game ID
+  const [inputGameId, setInputGameId] = useState(''); // State to store input game ID
 
   useEffect(() => {
     const newGameId = generateGameId(); // Generate a new game ID
@@ -19,14 +20,17 @@ const Chessboard = () => {
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === 'updateBoard') {
-        console.log(data.board,"b");
         setBoard(data.board);
       } else if (data.type === 'gameOver') {
-        console.log(data.winner,"w");
         setWinner(data.winner);
       } else if (data.type === 'validMoves') {
-        console.log(data,"m");
         setValidMoves(data.moves);
+      } else if (data.type === 'gameRoomInitialized') {
+        setGameId(data.gameId);
+      } else if (data.type === 'gameStarted') {
+        setBoard(data.board);
+      } else if (data.type === 'updateBoard') {
+        setBoard(data.move);
       }
     };
     setWs(ws);
@@ -35,6 +39,9 @@ const Chessboard = () => {
   }, []);
 
   const initializeGame = () => {
+    // Check if gameId is already set, if not, generate a new one
+    const gameIdToUse = gameId || generateGameId();
+    setGameId(gameIdToUse);
     const initialBoard = [
       ['brook', 'bknight', 'bbishop', 'bqueen', 'bking', 'bbishop', 'bknight', 'brook'],
       ['bpawn', 'bpawn', 'bpawn', 'bpawn', 'bpawn', 'bpawn', 'bpawn', 'bpawn'],
@@ -47,7 +54,13 @@ const Chessboard = () => {
     ];
     setBoard(initialBoard);
     if (ws) {
-      ws.send(JSON.stringify({ type: 'initializeGame', gameId: gameId, board: initialBoard }));
+      ws.send(JSON.stringify({ type: 'initializeGame', gameId: gameIdToUse, board: initialBoard }));
+    }
+  };
+
+  const joinGameRoom = () => {
+    if (ws && inputGameId) {
+      ws.send(JSON.stringify({ type: 'joinGameRoom', gameId: inputGameId }));
     }
   };
 
@@ -79,15 +92,12 @@ const Chessboard = () => {
       setValidMoves([]);
     }
   };
-
   const canMove = (toRow, toCol, validMoves) => {
     return validMoves.some(move => move.row === toRow && move.col === toCol);
   };
-
   const renderSquare = (piece, rowIndex, colIndex) => {
     const isSelected = selectedPiece && selectedPiece.row === rowIndex && selectedPiece.col === colIndex;
-    const isValidMovesDefined = validMoves && Array.isArray(validMoves); // Check if validMoves is defined and an array
-    const isValidMove = isValidMovesDefined && validMoves.some(move => move.row === rowIndex && move.col === colIndex);
+    const isValidMove = validMoves.some(move => move.row === rowIndex && move.col === colIndex);
     const isHighlighted = isSelected || isValidMove;
     return (
       <Square
@@ -98,7 +108,6 @@ const Chessboard = () => {
       />
     );
   };
-  
 
   const renderBoard = () => {
     return board.map((row, rowIndex) => (
@@ -111,6 +120,15 @@ const Chessboard = () => {
   return (
     <div>
       <button onClick={initializeGame}>Start Game</button>
+      <div>
+        <input
+          type="text"
+          placeholder="Enter Game ID"
+          value={inputGameId}
+          onChange={(e) => setInputGameId(e.target.value)}
+        />
+        <button onClick={joinGameRoom}>Join Game</button>
+      </div>
       <div className="chessboard">{board && renderBoard()}</div>
       {winner && <div className="winner-message">{`${winner} wins!`}</div>}
     </div>
