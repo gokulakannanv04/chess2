@@ -4,7 +4,7 @@ const switchTurn = () => {
   currentTurn = currentTurn === 'white' ? 'black' : 'white';
 };
 
-const getValidMoves = (piece, row, col, color, board) => {
+const getValidMoves = (piece, row, col, color, board,currentPlayerColor) => {
   const validMoves = [];
 
   // Define a function to check if a position is within the bounds of the board
@@ -15,7 +15,7 @@ const getValidMoves = (piece, row, col, color, board) => {
   // Calculate valid moves based on piece type
   switch (piece) {
     case 'bpawn':
-      if (color === 'b' && currentTurn === 'black') {
+      if (color === 'b' && currentTurn === 'black' &&currentPlayerColor==='b') {
         // Black pawn logic...
         // Black pawn moves forward by one square if the destination is empty
         if (isValidPosition(row + 1, col) && board[row + 1][col] === 'Empty') {
@@ -36,8 +36,8 @@ const getValidMoves = (piece, row, col, color, board) => {
       }
       break;
     case 'wpawn':
-      console.log("getmoves");
-      if (color === 'w' && currentTurn === 'white') {
+
+      if (color === 'w' && currentTurn === 'white'&&currentPlayerColor==='w') {
         // White pawn logic...
         if (isValidPosition(row - 1, col) && board[row - 1][col] === 'Empty') {
           validMoves.push({ row: row - 1, col });
@@ -57,7 +57,7 @@ const getValidMoves = (piece, row, col, color, board) => {
       }
       break;
     case 'wrook':
-      if (color === 'w' && currentTurn === 'white') {
+      if (color === 'w' && currentTurn === 'white'&&currentPlayerColor==='w') {
         // White rook logic...
         for (let r = row + 1; r < 8; r++) {
           if (board[r][col] === 'Empty') {
@@ -107,7 +107,7 @@ const getValidMoves = (piece, row, col, color, board) => {
       }
       break;
     case 'brook':
-      if (color === 'b' && currentTurn === 'black') {
+      if (color === 'b' && currentTurn === 'black' &&currentPlayerColor==='b') {
         // Black rook logic...
         for (let r = row + 1; r < 8; r++) {
           if (board[r][col] === 'Empty') {
@@ -157,7 +157,7 @@ const getValidMoves = (piece, row, col, color, board) => {
       }
       break;
     case 'wknight':
-      if (color === 'w' && currentTurn === 'white') {
+      if (color === 'w' && currentTurn === 'white'&&currentPlayerColor==='w') {
         // White knight logic...
         const WknightMoves = [
           { row: row - 2, col: col - 1 },
@@ -178,7 +178,7 @@ const getValidMoves = (piece, row, col, color, board) => {
       }
       break;
     case 'bknight':
-      if (color === 'b' && currentTurn === 'black') {
+      if (color === 'b' && currentTurn === 'black' &&currentPlayerColor==='b') {
         // Black knight logic...
         const knightMoves = [
           { row: row - 2, col: col - 1 },
@@ -199,7 +199,7 @@ const getValidMoves = (piece, row, col, color, board) => {
       }
       break;
     case 'wbishop':
-      if (color === 'w' && currentTurn === 'white') {
+      if (color === 'w' && currentTurn === 'white'&&currentPlayerColor==='w') {
         // White bishop logic...
         let i = row - 1, j = col - 1;
         while (isValidPosition(i, j) && (board[i][j] === 'Empty' || board[i][j].charAt(0) !== color)) {
@@ -247,7 +247,7 @@ const getValidMoves = (piece, row, col, color, board) => {
       }
       break;
     case 'bbishop':
-      if (color === 'b' && currentTurn === 'black') {
+      if (color === 'b' && currentTurn === 'black' &&currentPlayerColor==='b') {
         // Black bishop logic...
         let o = row - 1, p = col - 1;
 while (isValidPosition(o, p) && (board[o][p] === 'Empty' || board[o][p].charAt(0) !== color)) {
@@ -295,7 +295,7 @@ while (isValidPosition(o, p) && (board[o][p] === 'Empty' || board[o][p].charAt(0
       }
       break;
     case 'wqueen':
-      if (color === 'w' && currentTurn === 'white') {
+      if (color === 'w' && currentTurn === 'white'&&currentPlayerColor==='w') {
         // White queen logic...
         for (let k = row - 1; k >= 0; k--) {
           if (board[k][col] === 'Empty' || board[k][col].charAt(0) !== color) {
@@ -386,7 +386,7 @@ while (isValidPosition(o, p) && (board[o][p] === 'Empty' || board[o][p].charAt(0
       }
       break;
     case 'bqueen':
-      if (color === 'b' && currentTurn === 'black') {
+      if (color === 'b' && currentTurn === 'black' &&currentPlayerColor==='b') {
         // Black queen logic...
         for (let m = row - 1; m >= 0; m--) {
           if (board[m][col] === 'Empty' || board[m][col].charAt(0) !== color) {
@@ -477,7 +477,7 @@ while (isValidPosition(o, p) && (board[o][p] === 'Empty' || board[o][p].charAt(0
       }
       break;
     case 'wking':
-      if (color === 'w' && currentTurn === 'white') {
+      if (color === 'w' && currentTurn === 'white'&&currentPlayerColor==='w') {
         // White king logic...
      
           const directions = [
@@ -501,7 +501,7 @@ while (isValidPosition(o, p) && (board[o][p] === 'Empty' || board[o][p].charAt(0
       }
       break;
     case 'bking':
-      if (color === 'b' && currentTurn === 'black') {
+      if (color === 'b' && currentTurn === 'black' &&currentPlayerColor==='b') {
         // Black king logic...
         const bdirections = [
           { row: -1, col: -1 },
