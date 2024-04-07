@@ -10,7 +10,7 @@ const Chessboard = () => {
   const [ws, setWs] = useState(null);
   const [gameId, setGameId] = useState(null); // State to store the game ID
   const [inputGameId, setInputGameId] = useState(''); // State to store input game ID
-
+const [clientcolor, setClientColor] = useState('b');
   useEffect(() => {
     const newGameId = generateGameId(); // Generate a new game ID
     setGameId(newGameId); // Set the game ID state
@@ -22,9 +22,11 @@ const Chessboard = () => {
       if (data.type === 'updateBoard') {
         setBoard(data.board);
       } else if (data.type === 'gameOver') {
+  console.log("You win");
         setWinner(data.winner);
       } else if (data.type === 'waitingForPlayer') {
           console.log("Waiting for the second player to join...");
+  setClientColor('w');
         } else if (data.type === 'validMoves') {
         setValidMoves(data.moves);
       } else if (data.type === 'gameRoomInitialized') {
@@ -97,27 +99,56 @@ const Chessboard = () => {
   const canMove = (toRow, toCol, validMoves) => {
     return validMoves.some(move => move.row === toRow && move.col === toCol);
   };
-  const renderSquare = (piece, rowIndex, colIndex) => {
-    const isSelected = selectedPiece && selectedPiece.row === rowIndex && selectedPiece.col === colIndex;
-    const isValidMove = validMoves.some(move => move.row === rowIndex && move.col === colIndex);
-    const isHighlighted = isSelected || isValidMove;
-    return (
-      <Square
-        key={`${rowIndex}-${colIndex}`}
-        piece={piece}
-        onClick={() => handleSquareClick(rowIndex, colIndex)}
-        highlight={isHighlighted}
-      />
-    );
-  };
+const renderSquare = (piece, rowIndex, colIndex) => {
+  // Reverse the piece for the second player
+  const reversedPiece = clientcolor === 'w' ? piece : piece === 'Empty' ? piece : piece.charAt(0) === 'w' ? `b${piece.slice(1)}` : `w${piece.slice(1)}`;
 
-  const renderBoard = () => {
-    return board.map((row, rowIndex) => (
-      <div key={`row-${rowIndex}`} className="board-row">
-        {row.map((piece, colIndex) => renderSquare(piece, rowIndex, colIndex))}
-      </div>
-    ));
-  };
+  const isSelected = selectedPiece && selectedPiece.row === rowIndex && selectedPiece.col === colIndex;
+  const isValidMove = validMoves.some(move => move.row === rowIndex && move.col === colIndex);
+  const isHighlighted = isSelected || isValidMove;
+
+  return (
+    <Square
+      key={`${rowIndex}-${colIndex}`}
+      piece={reversedPiece}
+      onClick={() => handleSquareClick(rowIndex, colIndex)}
+      highlight={isHighlighted}
+    />
+  );
+};
+
+//   const renderSquare = (piece, rowIndex, colIndex) => {
+//     const isSelected = selectedPiece && selectedPiece.row === rowIndex && selectedPiece.col === colIndex;
+//     const isValidMove = validMoves.some(move => move.row === rowIndex && move.col === colIndex);
+//     const isHighlighted = isSelected || isValidMove;
+//     return (
+//       <Square
+//         key={`${rowIndex}-${colIndex}`}
+//         piece={piece}
+//         onClick={() => handleSquareClick(rowIndex, colIndex)}
+//         highlight={isHighlighted}
+//       />
+//     );
+//   };
+const renderBoard = () => {
+  // Reverse the board's rows for the second player
+  const reversedBoard = clientcolor === 'w' ? board.slice().reverse() : board;
+
+  return reversedBoard.map((row, rowIndex) => (
+    <div key={`row-${rowIndex}`} className="board-row">
+      {/* Reverse the row's pieces for the second player */}
+      {clientcolor === 'w' ? row.slice().reverse().map((piece, colIndex) => renderSquare(piece, rowIndex, colIndex)) :
+        row.map((piece, colIndex) => renderSquare(piece, rowIndex, colIndex))}
+    </div>
+  ));
+};
+// const renderBoard = () => {
+//   return board.map((row, rowIndex) => (
+//     <div key={`row-${rowIndex}`} className="board-row">
+//       {row.map((piece, colIndex) => renderSquare(piece, rowIndex, colIndex))}
+//     </div>
+//   ));
+// };
 
   return (
     <div>

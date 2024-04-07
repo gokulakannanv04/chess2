@@ -86,24 +86,8 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 wss.on('connection', (ws) => {
   console.log('New client connected');
-  const player = {
-  ws: ws,
-  gameId: generateGameId(), // Assign a unique game ID to the player
-  gameRoomId: null,
-  color: null  // Assign color based on who joins first
-};
-
-  // Find an available game room or create a new one
-  let gameRoom = findAvailableGameRoom();
-  if (!gameRoom) {
-    gameRoom = createGameRoom(player.gameId);
-    gameRooms.push(gameRoom);
-  }
-
-
-  // Add the player to the game room
-  addPlayerToGameRoom(player, gameRoom);
-
+  let player;
+let gameRoom;
   // If the game room is full, initialize the game
   // if (gameRoom.players.length === 2) {
   //   initializeGame(gameRoom);
@@ -114,6 +98,23 @@ wss.on('connection', (ws) => {
 ws.on('message', (message) => {
   const data = JSON.parse(message);
 if(data.type === 'initializeGame'){
+   player = {
+    ws: ws,
+    gameId: generateGameId(), // Assign a unique game ID to the player
+    gameRoomId: null,
+    color: null  // Assign color based on who joins first
+  };
+  
+    // Find an available game room or create a new one
+    gameRoom = findAvailableGameRoom();
+    if (!gameRoom) {
+      gameRoom = createGameRoom(player.gameId);
+      gameRooms.push(gameRoom);
+    }
+  
+  
+    // Add the player to the game room
+    addPlayerToGameRoom(player, gameRoom);
 if (gameRoom.players.length === 2) {
   gameRoom.players.forEach(player => {
     player.ws.send(JSON.stringify({ type: 'ready' }));
@@ -140,12 +141,32 @@ else if (data.type === 'getValidMoves') {
 });
 
 ws.on('close', () => {
-  console.log('Client disconnected');
-  if (player.gameRoomId) {
-    removePlayerFromGameRoom(player);
-  console.log('Client disconnected');
-  }
+  console.log('Client disconnected');
+  if (player && player.gameRoomId) {
+  
+    const gameRoom =  gameRooms.find(room => room.id === player.gameRoomId);
+
+
+ 
+    if (gameRoom) {
+      console.log(gameRoom.players[0].gameId,gameRooms,player.gameRoomId,"gm");
+      // if (gameRoom.players.length === 1) {
+        let remainingPlayer;
+        if(gameRoom.players[0].gameId=== player.gameId){
+         remainingPlayer = gameRoom.players[1];}
+        else{ remainingPlayer = gameRoom.players[0];}
+        remainingPlayer.ws.send(JSON.stringify({ type: 'gameOver', winner: 'You win!' }));
+        delete  gameRooms.find(room => room.id === player.gameRoomId);   removePlayerFromGameRoom(player);
+        console.log(gameRooms,player.gameRoomId,"dgm");
+      // }
+    } else {
+      console.log('Game room not found.');
+    }
+  }
 });
+
+
+
 });
 
 function generateGameId() {
