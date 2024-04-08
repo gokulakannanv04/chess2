@@ -13,10 +13,10 @@ const gameRooms = [];
 // const games = {};
 const PORT = process.env.PORT || 4000;
 // npm i express http mongoose ws crypto-js body-parser cors react react-router-dom
-mongoose.connect('mongodb+srv://sampledb:sampledb@cluster0.vusts07.mongodb.net/?retryWrites=true&w=majority', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// mongoose.connect('mongodb+srv://sampledb:sampledb@cluster0.vusts07.mongodb.net/?retryWrites=true&w=majority', {
+//   useNewUrlParser: true,
+//   useUnifiedTopology: true,
+// });
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -155,7 +155,9 @@ ws.on('close', () => {
         if(gameRoom.players[0].gameId=== player.gameId){
          remainingPlayer = gameRoom.players[1];}
         else{ remainingPlayer = gameRoom.players[0];}
+        if(remainingPlayer!=null){
         remainingPlayer.ws.send(JSON.stringify({ type: 'gameOver', winner: 'You win!' }));
+        }
         delete  gameRooms.find(room => room.id === player.gameRoomId);   removePlayerFromGameRoom(player);
         console.log(gameRooms,player.gameRoomId,"dgm");
       // }
@@ -198,13 +200,11 @@ function handleMove(ws, data, gameRoomId) {
 
   if (isValidMove) {
     updateBoard(from, to, data.board);
-    const winner = checkGameOver(data.board);
+    checkGameOver(data.board,gameRoom);
 
     gameRoom.players.forEach(player => {
       player.ws.send(JSON.stringify({ type: 'updateBoard', board: data.board }));
-      if (winner) {
-        player.ws.send(JSON.stringify({ type: 'gameOver', winner }));
-      }
+      
     });
   } else {
     ws.send(JSON.stringify({ type: 'invalidMove' }));
@@ -268,11 +268,33 @@ function validateMove(from, to, color, board) {
 function updateBoard(from, to, board) {
 
 }
-function checkGameOver(board) {
-    // Implement game over condition check
-    return null; // Return winner's color or null if game is not over
+function checkGameOver(board,gameRoom) {
+  let whiteKingPresent = false;
+  let blackKingPresent = false;
+console.log("cgo");
+  // Iterate through the board to check for kings
+  for (let row = 0; row < 8; row++) {
+    for (let col = 0; col < 8; col++) {
+      const piece = board[row][col];
+      if (piece === 'wking') {
+        whiteKingPresent = true;
+      } else if (piece === 'bking') {
+        blackKingPresent = true;
+      }
+    }
   }
 
+  // Check win conditions
+  if (!whiteKingPresent) {
+    gameRoom.players[0].ws.send(JSON.stringify({ type: 'gameOver', winner:"Loss" }));
+    gameRoom.players[1].ws.send(JSON.stringify({ type: 'gameOver', winner:"Win" }));
+    // Player 2 wins if white king is not present
+  } else if (!blackKingPresent) {
+    gameRoom.players[0].ws.send(JSON.stringify({ type: 'gameOver', winner:"Win" }));
+    gameRoom.players[1].ws.send(JSON.stringify({ type: 'gameOver', winner:"Loss" }));
+  }
+};
+  
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

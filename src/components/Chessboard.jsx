@@ -8,30 +8,40 @@ const Chessboard = () => {
   const [validMoves, setValidMoves] = useState([]);
   const [winner, setWinner] = useState(null);
   const [ws, setWs] = useState(null);
-  const [gameId, setGameId] = useState(null); // State to store the game ID
-  const [inputGameId, setInputGameId] = useState(''); // State to store input game ID
-const [clientcolor, setClientColor] = useState('b');
+  const [gameId, setGameId] = useState(null);
+const [start, setStart] = useState('0');
+const [connect, setConnect] = useState('0');
+const [startbutton, setStartButton] = useState('1');
+ // State to store the game ID
+//   const [inputGameId, setInputGameId] = useState(''); // State to store input game ID
+const [clientColor, setClientColor] = useState('b');
   useEffect(() => {
     const newGameId = generateGameId(); // Generate a new game ID
     setGameId(newGameId); // Set the game ID state
-
-    const ws = new WebSocket('ws://localhost:4000'); // Replace with your server URL
+    const ws = new WebSocket('ws://localhost:4000'); 
+//     const ws = new WebSocket('wss://chess2backend.onrender.com'); // Replace with your server URL
     ws.onopen = () => console.log('WebSocket connected');
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === 'updateBoard') {
         setBoard(data.board);
       } else if (data.type === 'gameOver') {
-  console.log("You win");
+  console.log(`${data.winner}`);
         setWinner(data.winner);
+setStart('0');
       } else if (data.type === 'waitingForPlayer') {
-          console.log("Waiting for the second player to join...");
+          
+  console.log("Waiting for the second player to join...");
   setClientColor('w');
+  setConnect('1');
+
         } else if (data.type === 'validMoves') {
         setValidMoves(data.moves);
       } else if (data.type === 'gameRoomInitialized') {
         setGameId(data.gameId);
       } else if (data.type === 'ready') {
+         setStart('1');
+         setConnect('0');
          console.log("Ready to start the game");
       } else if (data.type === 'updateBoard') {
         setBoard(data.move);
@@ -43,30 +53,34 @@ const [clientcolor, setClientColor] = useState('b');
   }, []);
 
   const initializeGame = () => {
+  setStartButton('0');
+  const initialBoard = [
+          ['brook', 'bknight', 'bbishop', 'bqueen', 'bking', 'bbishop', 'bknight', 'brook'],
+          ['bpawn', 'bpawn', 'bpawn', 'bpawn', 'bpawn', 'bpawn', 'bpawn', 'bpawn'],
+          ['Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty'],
+          ['Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty'],
+          ['Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty'],
+          ['Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty'],
+          ['wpawn', 'wpawn', 'wpawn', 'wpawn', 'wpawn', 'wpawn', 'wpawn', 'wpawn'],
+          ['wrook', 'wknight', 'wbishop', 'wqueen', 'wking', 'wbishop', 'wknight', 'wrook']
+        ];
     // Check if gameId is already set, if not, generate a new one
     const gameIdToUse = gameId || generateGameId();
     setGameId(gameIdToUse);
-    const initialBoard = [
-      ['brook', 'bknight', 'bbishop', 'bqueen', 'bking', 'bbishop', 'bknight', 'brook'],
-      ['bpawn', 'bpawn', 'bpawn', 'bpawn', 'bpawn', 'bpawn', 'bpawn', 'bpawn'],
-      ['Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty'],
-      ['Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty'],
-      ['Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty'],
-      ['Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty', 'Empty'],
-      ['wpawn', 'wpawn', 'wpawn', 'wpawn', 'wpawn', 'wpawn', 'wpawn', 'wpawn'],
-      ['wrook', 'wknight', 'wbishop', 'wqueen', 'wking', 'wbishop', 'wknight', 'wrook']
-    ];
-    setBoard(initialBoard);
+
+  setBoard(initialBoard);
+   
     if (ws) {
       ws.send(JSON.stringify({ type: 'initializeGame', gameId: gameIdToUse, board: initialBoard }));
     }
+
   };
 
-  const joinGameRoom = () => {
-    if (ws && inputGameId) {
-      ws.send(JSON.stringify({ type: 'joinGameRoom', gameId: inputGameId }));
-    }
-  };
+//   const joinGameRoom = () => {
+//     if (ws && inputGameId) {
+//       ws.send(JSON.stringify({ type: 'joinGameRoom', gameId: inputGameId }));
+//     }
+//   };
 
   const handleSquareClick = (row, col) => {
     if (!ws || !board) return;
@@ -81,6 +95,7 @@ const [clientcolor, setClientColor] = useState('b');
     } else {
       const { row: selectedRow, col: selectedCol } = selectedPiece;
       if (row === selectedRow && col === selectedCol) {
+  ws.send(JSON.stringify({ type: 'dontmove'}));
         setSelectedPiece(null);
         setValidMoves([]);
         return;
@@ -91,7 +106,7 @@ const [clientcolor, setClientColor] = useState('b');
         newBoard[selectedRow][selectedCol] = 'Empty';
         setBoard(newBoard);
         ws.send(JSON.stringify({ type: 'move', gameId: gameId, from: { row: selectedRow, col: selectedCol }, to: { row, col }, board: newBoard }));
-      }
+      }else{ws.send(JSON.stringify({ type: 'dontmove'}));}
       setSelectedPiece(null);
       setValidMoves([]);
     }
@@ -100,9 +115,13 @@ const [clientcolor, setClientColor] = useState('b');
     return validMoves.some(move => move.row === toRow && move.col === toCol);
   };
 const renderSquare = (piece, rowIndex, colIndex) => {
-  // Reverse the piece for the second player
-  const reversedPiece = clientcolor === 'w' ? piece : piece === 'Empty' ? piece : piece.charAt(0) === 'w' ? `b${piece.slice(1)}` : `w${piece.slice(1)}`;
+  // Determine the color of the current player
 
+
+  // Reverse the piece for the second player (if black)
+  const reversedPiece = clientColor === 'b' ? reversePiece(piece) : piece;
+
+  // Check if the current square is selected or a valid move
   const isSelected = selectedPiece && selectedPiece.row === rowIndex && selectedPiece.col === colIndex;
   const isValidMove = validMoves.some(move => move.row === rowIndex && move.col === colIndex);
   const isHighlighted = isSelected || isValidMove;
@@ -116,6 +135,21 @@ const renderSquare = (piece, rowIndex, colIndex) => {
     />
   );
 };
+
+const boardchange = (position) => {
+  if (clientColor === 'w') {
+    return position;
+  }
+  return 7-position;
+};
+// Function to reverse the piece for the second player
+const reversePiece = (piece) => {
+  if (piece === 'Empty') {
+    return piece;
+  }
+  return piece.charAt(0) === 'w' ? `w${piece.slice(1)}` : `b${piece.slice(1)}`;
+};
+
 
 //   const renderSquare = (piece, rowIndex, colIndex) => {
 //     const isSelected = selectedPiece && selectedPiece.row === rowIndex && selectedPiece.col === colIndex;
@@ -131,17 +165,21 @@ const renderSquare = (piece, rowIndex, colIndex) => {
 //     );
 //   };
 const renderBoard = () => {
-  // Reverse the board's rows for the second player
-  const reversedBoard = clientcolor === 'w' ? board.slice().reverse() : board;
+  // Determine the color of the current player
+
+
+  // Reverse the board's rows for the second player (if black)
+  const reversedBoard = clientColor === 'b' ? board.slice().reverse() : board;
 
   return reversedBoard.map((row, rowIndex) => (
     <div key={`row-${rowIndex}`} className="board-row">
       {/* Reverse the row's pieces for the second player */}
-      {clientcolor === 'w' ? row.slice().reverse().map((piece, colIndex) => renderSquare(piece, rowIndex, colIndex)) :
+      {clientColor === 'b' ? row.slice().reverse().map((piece, colIndex) => renderSquare(piece,boardchange(rowIndex), boardchange(colIndex) )) :
         row.map((piece, colIndex) => renderSquare(piece, rowIndex, colIndex))}
     </div>
   ));
 };
+
 // const renderBoard = () => {
 //   return board.map((row, rowIndex) => (
 //     <div key={`row-${rowIndex}`} className="board-row">
@@ -152,18 +190,15 @@ const renderBoard = () => {
 
   return (
     <div>
-      <button onClick={initializeGame}>Start Game</button>
-      <div>
-        <input
-          type="text"
-          placeholder="Enter Game ID"
-          value={inputGameId}
-          onChange={(e) => setInputGameId(e.target.value)}
-        />
-        <button onClick={joinGameRoom}>Join Game</button>
-      </div>
-      <div className="chessboard">{board && renderBoard()}</div>
-      {winner && <div className="winner-message">{`${winner} wins!`}</div>}
+     {startbutton==='1'?( <button onClick={initializeGame}>Start Game</button>):('')}
+    
+     {start==='1'?( <div className="chessboard">{board && renderBoard()}</div>): ( "" )}
+      {winner && <div className="winner-message">{`You ${winner}`}</div>}
+{connect==='1'?(<div className="connect">
+      <div className="circle">
+    
+      </div>
+    </div>):("")}
     </div>
   );
 };
