@@ -18,8 +18,8 @@ const [clientColor, setClientColor] = useState('b');
   useEffect(() => {
     const newGameId = generateGameId(); // Generate a new game ID
     setGameId(newGameId); // Set the game ID state
-    const ws = new WebSocket('ws://localhost:4000'); 
-//     const ws = new WebSocket('wss://chess2backend.onrender.com'); // Replace with your server URL
+//     const ws = new WebSocket('ws://localhost:4000'); 
+    const ws = new WebSocket('wss://chess2backend.onrender.com'); // Replace with your server URL
     ws.onopen = () => console.log('WebSocket connected');
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
