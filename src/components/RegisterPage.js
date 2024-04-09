@@ -5,9 +5,10 @@ function RegisterPage ()  {
   const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
+  const [loading, setLoading] = useState(false);
   const handleSubmit = async() => {
     // navigate('/login');
+    setLoading(true);
     try {
       // const response = await fetch('http://localhost:4000/register', {
       const response = await fetch('https://chess2backend.onrender.com/register', {
@@ -21,16 +22,19 @@ function RegisterPage ()  {
       if (response.ok) {
         // setRegistrationStatus('success');
         console.log('User registered successfully');
-
+        console.log('Login successful');
+        setLoading(false);
         // Navigate to the login page upon successful registration
         navigate('/login');
       } else {
         // setRegistrationStatus('failure');
         console.error('Registration failed');
+        setLoading(false);
       }
     } catch (error) {
       // setRegistrationStatus('failure');
       console.error(error);
+      setLoading(false);
     }
   };
   useEffect(() => {
@@ -59,7 +63,9 @@ function RegisterPage ()  {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
-        <button className="login-button" onClick={handleSubmit}>Register</button>
+        <button className="login-button" onClick={handleSubmit} disabled={loading}>
+        {loading ? <div className="spinner"></div> : 'Register'}
+      </button>
       </div>
     </div>
   );

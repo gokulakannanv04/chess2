@@ -12,15 +12,19 @@ const Chessboard = () => {
 const [start, setStart] = useState('0');
 const [connect, setConnect] = useState('0');
 const [startbutton, setStartButton] = useState('1');
+const [loading, setLoading] = useState(true);
  // State to store the game ID
 //   const [inputGameId, setInputGameId] = useState(''); // State to store input game ID
 const [clientColor, setClientColor] = useState('b');
   useEffect(() => {
     const newGameId = generateGameId(); // Generate a new game ID
     setGameId(newGameId); // Set the game ID state
-//     const ws = new WebSocket('ws://localhost:4000'); 
-    const ws = new WebSocket('wss://chess2backend.onrender.com'); // Replace with your server URL
-    ws.onopen = () => console.log('WebSocket connected');
+    const ws = new WebSocket('ws://localhost:4000'); 
+//     const ws = new WebSocket('wss://chess2backend.onrender.com'); // Replace with your server URL
+    ws.onopen = () => {console.log('WebSocket connected');
+setLoading(false);
+}
+
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === 'updateBoard') {
@@ -190,13 +194,13 @@ const renderBoard = () => {
 
   return (
     <div>
-     {startbutton==='1'?( <button onClick={initializeGame}>Start Game</button>):('')}
+     {startbutton==='1'?( <button onClick={initializeGame}disabled={loading}>{loading ? <div className="spinner"></div> : 'Start'}</button>):('')}
     
      {start==='1'?( <div className="chessboard">{board && renderBoard()}</div>): ( "" )}
       {winner && <div className="winner-message">{`You ${winner}`}</div>}
 {connect==='1'?(<div className="connect">
       <div className="circle">
-    
+      <p class="text">Connecting...</p>
       </div>
     </div>):("")}
     </div>

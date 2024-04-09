@@ -6,7 +6,20 @@
     justify-content: center;
     align-items: center;
   }
+  .spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-top-color: white;
+    border-radius: 30px;
+    animation: spin 1s linear infinite;
+  }
   
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
   .login-container {
     width: 300px;
     padding: 20px;

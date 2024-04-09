@@ -15,19 +15,21 @@ function HomePage() {
   }, []);
 
   const handleLogout = () => {
-    // Navigate to the login page when the button is clicked using navigate function
-    navigate('/');
     // Clear username from localStorage to log out the user completely
     localStorage.removeItem('username');
     setIsLoggedIn(false);
+    navigate('/');
+  };
+
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
   };
 
   const handleLogin = () => {
-    // Navigate to the login page when the button is clicked using navigate function
     navigate('/login');
   };
+
   const handlePlay = () => {
-    // Navigate to the login page when the button is clicked using navigate function
     navigate('/chessboard');
   };
 
@@ -41,21 +43,18 @@ function HomePage() {
       <div className="content-overlay">
         <div>
           <ul>
-          <li style={{ float: 'right' }}>
-           
-           {isLoggedIn ? (
-             <button className="login-button" onClick={handleLogout}>Logout</button>
-           ) : (
-             <button className="login-button" onClick={handleLogin}>Login</button>
-           )}
-         </li>
-          <li style={{ float: 'right' }}>
-            <div> {isLoggedIn ? (
-      <button className="login-button" onClick={handlePlay}>Play</button>
-      ) : ( <br></br> )}
-    </div>
+            <li style={{ float: 'right' }}>
+              {isLoggedIn ? (
+                <button className="login-button" onClick={handleLogout}>Logout</button>
+              ) : (
+                <button className="login-button" onClick={handleLogin}>Login</button>
+              )}
             </li>
-            
+            <li style={{ float: 'right' }}>
+              {isLoggedIn && (
+                <button className="login-button" onClick={handlePlay}>Play</button>
+              )}
+            </li>
           </ul>
         </div>
       </div>
