@@ -21,12 +21,13 @@ function HomePage() {
     navigate('/');
   };
 
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
-  };
+  // const handleLoginSuccess = () => {
+  //   setIsLoggedIn(true);
+  // };
 
   const handleLogin = () => {
     navigate('/login');
+    setIsLoggedIn(true);
   };
 
   const handlePlay = () => {

@@ -25,7 +25,7 @@ function LoginPage() {
       });
 
       if (response.ok) {
-        const data = await response.json();
+        // const data = await response.json();
         // Save username and password to localStorage if rememberMe is checked
         if (rememberMe) {
           localStorage.setItem('username', username);
@@ -104,3 +104,4 @@ function LoginPage() {
 };
 
 export default LoginPage;
+
