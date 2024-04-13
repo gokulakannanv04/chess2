@@ -99,7 +99,7 @@ setStart('0');
     } else {
       const { row: selectedRow, col: selectedCol } = selectedPiece;
       if (row === selectedRow && col === selectedCol) {
-  ws.send(JSON.stringify({ type: 'dontmove'}));
+
         setSelectedPiece(null);
         setValidMoves([]);
         return;
@@ -110,7 +110,7 @@ setStart('0');
         newBoard[selectedRow][selectedCol] = 'Empty';
         setBoard(newBoard);
         ws.send(JSON.stringify({ type: 'move', gameId: gameId, from: { row: selectedRow, col: selectedCol }, to: { row, col }, board: newBoard }));
-      }else{ws.send(JSON.stringify({ type: 'dontmove'}));}
+      }
       setSelectedPiece(null);
       setValidMoves([]);
     }

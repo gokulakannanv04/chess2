@@ -1,21 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState,useEffect } from 'react';
 import './LoginPage.css'; // Import the CSS file for styling
 import { useNavigate } from 'react-router-dom';
-
-function LoginPage() {
-  const navigate = useNavigate();
+function LoginPage () {
+    const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const handleRegister = () => {
     navigate('/register'); 
   }
-
-  const handleSubmit = async () => {
+  const handleSubmit = async() => {
+    // navigate('/register'); 
     setLoading(true);
     try {
+      // const response = await fetch('http://localhost:4000/login', {
       const response = await fetch('https://chess2backend.onrender.com/login', {
         method: 'POST',
         headers: {
@@ -25,39 +23,40 @@ function LoginPage() {
       });
 
       if (response.ok) {
-        // const data = await response.json();
-        // Save username and password to localStorage if rememberMe is checked
-        if (rememberMe) {
-          localStorage.setItem('username', username);
-          localStorage.setItem('password', password);
-        } else {
-          // Clear saved credentials from localStorage if rememberMe is not checked
-          localStorage.removeItem('username');
-          localStorage.removeItem('password');
-        }
-        // Navigate to the home page upon successful login
-        navigate('/');
-        setLoading(false);
+        const a=await response.json();
+        localStorage.setItem('username', username);
+        localStorage.setItem('password', password);
+        // setName(a.username);
+        navigate('/'); 
+        // setPass(a.password);
+        // setLoginStatus(username);
+        console.log(a.username);
         console.log('Login successful');
+       
+        setLoading(false);
+        // setName(username);
+        // // setPass(password);
+        // const a=await response.json();
+        // setData(a);
+
+        // Redirect to the home page upon successful login
+        // navigate('/');
+
       } else {
+        // setLogin('failure');
+        // setLoginStatus('failure');
         console.error('Login failed');
         setLoading(false);
       }
     } catch (error) {
+      // setLoginStatus('failure');
       console.error(error);
       setLoading(false);
     }
+    
   };
-
   useEffect(() => {
-    // Check if there are saved credentials in localStorage and auto-fill the form
-    const storedUsername = localStorage.getItem('username');
-    const storedPassword = localStorage.getItem('password');
-    if (storedUsername && storedPassword) {
-      setUsername(storedUsername);
-      setPassword(storedPassword);
-      setRememberMe(true);
-    }
+    window.scrollTo(0, 0);
   }, []);
 
   return (
@@ -81,27 +80,14 @@ function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-        </div>
-        <div className="form-group">
-          <label>
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-            />
-            Remember me
-          </label>
-        </div>
-        <div className="fulllogin-button">
-          <button className="login-buttonr" onClick={handleSubmit} disabled={loading}>
-            {loading ? <div className="spinner"></div> : 'Login'}
-          </button>
-          <button className="login-buttonr" onClick={handleRegister}>Register</button>
-        </div>
-      </div>
+        </div ><div className="fulllogin-button">
+        <button className="login-buttonr" onClick={handleSubmit} disabled={loading}>
+        {loading ? <div className="spinner"></div> : 'Login'}
+      </button>
+        <button className="login-buttonr" onClick={handleRegister}>Register</button>
+      </div></div>
     </div>
   );
 };
 
 export default LoginPage;
-
