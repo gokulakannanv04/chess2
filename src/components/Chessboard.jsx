@@ -28,7 +28,7 @@ const Chessboard = () => {
   const [loading, setLoading] = useState(true);
   const [clientColor, setClientColor] = useState('b');
   const[gameRoom,setGameRoom] =useState(null);
-
+  const backgroundColor = winner==='Win' ? 'green' : 'red';
   useEffect(() => {
     const newGameId = generateGameId();
     setGameId(newGameId);
@@ -214,7 +214,7 @@ const Chessboard = () => {
       </Popup>
       {startbutton === '1' ? (<button onClick={initializeGame} disabled={loading}>{loading ? <div className="spinner"></div> : 'Start'}</button>) : ('')}
       {start === '1' ? (<div className="chessboard">{board && renderBoard()}</div>) : ("")}
-      {winner && <div className="winner-message">{`You ${winner}`}</div>}
+      {winner && <div className="winner-message"  style={{ backgroundColor }}><h1>{`You ${winner}`}</h1></div>}
       {connect === '1' ? (<div className="connect">
         <div className="circle">
           <p className="text">Connecting...</p>

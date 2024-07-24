@@ -33,9 +33,9 @@ function HomePage() {
   };
 
   return (
-    <div className="home-container">
+    <div className="home-container" >
       <img
-        src="https://wallpapercave.com/wp/wp2883566.jpg"
+        src="home.jpeg"
         alt="Home"
         className="home-image"
       />
