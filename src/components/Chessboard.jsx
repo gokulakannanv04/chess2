@@ -32,8 +32,8 @@ const Chessboard = () => {
   useEffect(() => {
     const newGameId = generateGameId();
     setGameId(newGameId);
-    const ws = new WebSocket('ws://localhost:4000');
-    //     const ws = new WebSocket('wss://chess2backend.onrender.com'); // Replace with your server URL
+    // const ws = new WebSocket('ws://localhost:4000');
+        const ws = new WebSocket('wss://chess2backend.onrender.com'); // Replace with your server URL
     ws.onopen = () => {
       console.log('WebSocket connected');
       setLoading(false);
