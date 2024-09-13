@@ -28,7 +28,7 @@ function LoginPage() {
       if (response.ok) {
         // const data = await response.json();
         // Save username and password to localStorage if rememberMe is checked
-        if (rememberMe) {
+        if (true) {
           localStorage.setItem('username', username);
           localStorage.setItem('password', password);
         } else {

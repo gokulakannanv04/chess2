@@ -34,11 +34,7 @@ function HomePage() {
 
   return (
     <div className="home-container" >
-      <img
-        src="home.jpeg"
-        alt="Home"
-        className="home-image"
-      />
+      
       <div className="content-overlay">
         <div>
           <ul>
@@ -47,12 +43,12 @@ function HomePage() {
            {isLoggedIn ? (
              <button className="login-button" onClick={handleLogout}>Logout</button>
            ) : (
-             <button className="login-button" onClick={handleLogin}>Login</button>
+             <button className=" center" onClick={handleLogin}>Login</button>
            )}
          </li>
           <li style={{ float: 'right' }}>
             <div> {isLoggedIn ? (
-      <button className="login-button" onClick={handlePlay}>Play</button>
+      <button className=" center" onClick={handlePlay}>Play</button>
       ) : ( <br></br> )}
     </div>
             </li>
